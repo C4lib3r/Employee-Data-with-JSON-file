@@ -166,21 +166,34 @@ const filterEmployeeByStatus = (req, res) => {
 };
 
 //Find employee based on birthdate
-const searchBybirthDate = (req, res) => {
-  const birthDate = req.query.birthDate;
-  const employees = readDataFromFile(employeeDB);
-  const employee = employees.find((emp) => emp.birthDate === birthDate);
-  console.log(employee);
-  res.status(200).json(employee);
-};
+const searchByBDorName = (req, res) => {
+  const { birthDate, firstName } = req.query;
+  if (!birthDate && !firstName) {
+    return res.status(400).json({
+      message:
+        "At least one query parameter (birthdate or first name is required)",
+    });
+  }
 
-//Find employee based on first name
-const searchByName = (req, res) => {
-  const firstName = req.query.firstName;
-  const employees = readDataFromFile(employeeDB);
-  const employee = employees.find((emp) => emp.firstName === firstName);
-  console.log(employee);
-  res.status(200).json(employee);
+  try {
+    const employees = readDataFromFile(employeeDB);
+    const employee = employees.filter(
+      (emp) =>
+        (birthDate && emp.birthDate === birthDate) ||
+        (firstName && emp.firstName === firstName)
+    );
+
+    if (employee.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No employee found matching the criteris." });
+    }
+
+    res.status(200).json(employee);
+  } catch (error) {
+    console.error("Error reading data from file:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 module.exports = {
@@ -193,6 +206,5 @@ module.exports = {
   deleteEmployee,
   filterEmployeeByCreatedDate,
   filterEmployeeByStatus,
-  searchBybirthDate,
-  searchByName,
+  searchByBDorName,
 };

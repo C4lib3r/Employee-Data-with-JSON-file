@@ -10,8 +10,7 @@ const {
   deleteEmployee,
   filterEmployeeByCreatedDate,
   filterEmployeeByStatus,
-  searchBybirthDate,
-  searchByName,
+  searchByBDorName,
 } = require("../controllers/employee-controller");
 
 //Home page endpoint
@@ -21,7 +20,7 @@ router.get("/", getHome);
 router.get("/getallemployees", getAllEmployees);
 
 //Get employee By ID
-router.get("/employee/:id", getEmployeeById);
+router.get("/employeeByID/:id", getEmployeeById);
 
 //create new employee
 router.post("/createemployee", createEmployee);
@@ -34,17 +33,15 @@ router.put("/updateEmployee", updateEmployee);
 //Delete existing employee
 //Throw error if employee does not exist
 //Hard delete or soft delete
-router.put("/deleteEmployee/:id", deleteEmployee);
+router.delete("/deleteEmployee/:id", deleteEmployee);
 
 //Filter records based on Created date asc/ desc , Status (active / Inactive)
 router.get("/filtercreateddate", filterEmployeeByCreatedDate);
 
-router.get("/filtercreateddate", filterEmployeeByStatus);
+router.get("/filteremployeebystatus", filterEmployeeByStatus);
 
-//can search records based on Name
-router.get("/employee/birthdate", searchBybirthDate);
+//can search records based on Name, birthdate
+router.get("/employee/search", searchByBDorName);
 
-//can search records based on Birth date
-router.get("/employee/name", searchByName);
 
 module.exports = router;
