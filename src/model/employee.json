@@ -25,36 +25,13 @@
   },
   {
     "empID": 4,
-    "createdDate": "2024-07-21T13:28:33.157Z",
-    "updatedDate": "2024-07-21T13:28:33.157Z",
-    "status": "Active",
-    "is_deleted": false
-  },
-  {
-    "empID": 5,
-    "createdDate": "2024-07-21T13:33:52.659Z",
-    "updatedDate": "2024-07-21T13:33:52.659Z",
-    "status": "Active",
-    "is_deleted": false
-  },
-  {
-    "empID": 6,
-    "createdDate": "2024-07-21T13:34:09.720Z",
-    "updatedDate": "2024-07-21T13:34:09.720Z",
-    "status": "Active",
-    "is_deleted": false
-  },
-  {
-    "empID": 7,
-    "createdDate": "2024-07-21T13:34:45.630Z",
-    "updatedDate": "2024-07-21T13:34:45.630Z",
-    "status": "Active",
-    "is_deleted": false
-  },
-  {
-    "empID": 8,
-    "createdDate": "2024-07-21T13:35:26.977Z",
-    "updatedDate": "2024-07-21T13:35:26.977Z",
+    "firstName": "John",
+    "lastName": "Doe",
+    "birthdDate": "1990-01-01",
+    "photo": "photo.jpg",
+    "joiningDate": "2024-01-01",
+    "createdDate": "2024-07-21",
+    "updatedDate": "2024-07-21",
     "status": "Active",
     "is_deleted": false
   }
