@@ -23,13 +23,21 @@ const getHome = (req, res) => {
 //Get all employyees
 const getAllEmployees = (req, res) => {
   const employees = readDataFromFile(employeeDB);
-  // const filteredData =
-  res.status(200).json(dataJSON);
+  const filteredData = employees.sort((a, b) => {
+    if (a.createdDate < b.createdDate) {
+      return 1;
+    } else if (a.createdDate > b.createdDate) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+  res.status(200).json(filteredData);
 };
 
 //Get employee by id
 const getEmployeeById = (req, res) => {
-  const id = req.params.id; // Extract id from request parameters
+  const id = parseInt(req.params.id); // Extract id from request parameters
 
   try {
     const employees = readDataFromFile(employeeDB);
@@ -39,7 +47,7 @@ const getEmployeeById = (req, res) => {
       return res.status(404).send("Employee not found");
     }
 
-    res.json(employee); // Send JSON data of the employee as response
+    res.status(200).json(employee); // Send JSON data of the employee as response
   } catch (error) {
     console.error("Error fetching employee by id:", error);
     res.status(500).send("Error fetching employee data");
@@ -90,7 +98,7 @@ const createEmployee = (req, res) => {
 //Update employee By Id
 const updateEmployee = (req, res) => {
   const {
-    id,
+    empID,
     firstName,
     lastName,
     photo,
@@ -99,28 +107,59 @@ const updateEmployee = (req, res) => {
     status,
     is_deleted,
   } = req.body;
-  const data = [
-    firstName,
-    lastName,
-    photo,
-    createdDate,
-    updatedDate,
-    status,
-    is_deleted,
-  ];
+
   const employees = readDataFromFile(employeeDB);
-  const employee = employees.find((emp) => emp.empID === id);
-  for (item in data) {
-    employee[item];
+  const employee = employees.find((emp) => emp.empID === empID);
+  if (!employee) {
+    res.status(400).send("Employee not found.");
   }
+
+  if (firstName) employee.firstName = firstName;
+  if (lastName) employee.lastName = lastName;
+  if (photo) employee.photo = photo;
+  if (createdDate) employee.createdDate = createdDate;
+  if (updatedDate) employee.updatedDate = updatedDate;
+  if (status) employee.status = status;
+  if (is_deleted) employee.is_deleted = is_deleted;
+
+  //Try using for loop
+
   console.log(employee);
+  writeInFile(employeeDB, employees);
+  res.status(200).json(employee);
 };
 
 // Delete employee by ID
-const deleteEmployee = (req, res) => {};
+const deleteEmployee = (req, res) => {
+  const { id } = req.body;
+  const employees = readDataFromFile(employeeDB);
+
+  const employeeIndex = employees.findIndex((emp) => emp.empID === id);
+
+  if (employeeIndex === -1) {
+    res.status(400).send("Employee not found");
+  }
+
+  employees.splice(employeeIndex, 1);
+  writeInFile(employeeDB, employees);
+
+  res.status(200).send();
+};
 
 //Filter Employee based on created date
-const filterEmployeeByCreatedDate = (req, res) => {};
+const filterEmployeeByCreatedDate = (req, res) => {
+  const employees = readDataFromFile(employeeDB);
+  const filteredData = employees.sort((a, b) => {
+    if (a.createdDate < b.createdDate) {
+      return -1;
+    } else if (a.createdDate > b.createdDate) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+  res.status(200).json(filteredData);
+};
 
 //Filter Employee based on status
 const filterEmployeeByStatus = (req, res) => {
@@ -132,13 +171,13 @@ const filterEmployeeByStatus = (req, res) => {
   const filteredData = employees.sort((a, b) => {
     if (statusOrder === "activeFirst") {
       if (
-        a.statusOrder.toLowercase() === "active" &&
-        b.statusOrder.toLowerCase() === "inactive"
+        a.status.toLowerCase() === "active" &&
+        b.status.toLowerCase() === "inactive"
       ) {
         return -1;
       } else if (
-        a.statusOrder.toLowercase() === "inactive" &&
-        b.statusOrder.toLowerCase() === "active"
+        a.status.toLowerCase() === "inactive" &&
+        b.status.toLowerCase() === "active"
       ) {
         return 1;
       } else {
@@ -146,13 +185,13 @@ const filterEmployeeByStatus = (req, res) => {
       }
     } else if (statusOrder === "inActiveFirst") {
       if (
-        a.statusOrder.toLowercase() === "inactive" &&
-        b.statusOrder.toLowerCase() === "active"
+        a.status.toLowerCase() === "inactive" &&
+        b.status.toLowerCase() === "active"
       ) {
         return -1;
       } else if (
-        a.statusOrder.toLowercase() === "active" &&
-        b.statusOrder.toLowerCase() === "inactive"
+        a.status.toLowerCase() === "active" &&
+        b.status.toLowerCase() === "inactive"
       ) {
         return 1;
       } else {
