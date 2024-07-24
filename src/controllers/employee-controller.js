@@ -23,15 +23,17 @@ const getHome = (req, res) => {
 //Get all employyees
 const getAllEmployees = (req, res) => {
   const employees = readDataFromFile(employeeDB);
-  const filteredData = employees.sort((a, b) => {
-    if (a.createdDate < b.createdDate) {
-      return 1;
-    } else if (a.createdDate > b.createdDate) {
-      return -1;
-    } else {
-      return 0;
-    }
-  });
+  const filteredData = employees
+    .filter((emp) => !is_deleted)
+    .sort((a, b) => {
+      if (a.createdDate < b.createdDate) {
+        return 1;
+      } else if (a.createdDate > b.createdDate) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
   res.status(200).json(filteredData);
 };
 
@@ -41,7 +43,9 @@ const getEmployeeById = (req, res) => {
 
   try {
     const employees = readDataFromFile(employeeDB);
-    const employee = employees.find((emp) => emp.empID === parseInt(id)); // Assuming id is a number in your JSON data
+    const employee = employees.find(
+      (emp) => emp.empID === parseInt(id) && !emp.is_deleted
+    ); // Assuming id is a number in your JSON data
 
     if (!employee) {
       return res.status(404).send("Employee not found");
@@ -134,30 +138,32 @@ const deleteEmployee = (req, res) => {
   const { id } = req.body;
   const employees = readDataFromFile(employeeDB);
 
-  const employeeIndex = employees.findIndex((emp) => emp.empID === id);
+  const employee = employees.find((emp) => emp.empID === id);
 
-  if (employeeIndex === -1) {
+  if (!employee) {
     res.status(400).send("Employee not found");
   }
 
-  employees.splice(employeeIndex, 1);
+  employees.is_deleted = true;
   writeInFile(employeeDB, employees);
 
-  res.status(200).send();
+  res.status(200).json({ message: "Employee soft deleted successfully" });
 };
 
 //Filter Employee based on created date
 const filterEmployeeByCreatedDate = (req, res) => {
   const employees = readDataFromFile(employeeDB);
-  const filteredData = employees.sort((a, b) => {
-    if (a.createdDate < b.createdDate) {
-      return -1;
-    } else if (a.createdDate > b.createdDate) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+  const filteredData = employees
+    .filter((emp) => !emp.is_deleted)
+    .sort((a, b) => {
+      if (a.createdDate < b.createdDate) {
+        return -1;
+      } else if (a.createdDate > b.createdDate) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   res.status(200).json(filteredData);
 };
 
@@ -168,39 +174,41 @@ const filterEmployeeByStatus = (req, res) => {
   // const filteredData = employees.find(emp=> emp.status.toLowercase() === status.toLowerCase())
 
   const statusOrder = req.query.statusOrder;
-  const filteredData = employees.sort((a, b) => {
-    if (statusOrder === "activeFirst") {
-      if (
-        a.status.toLowerCase() === "active" &&
-        b.status.toLowerCase() === "inactive"
-      ) {
-        return -1;
-      } else if (
-        a.status.toLowerCase() === "inactive" &&
-        b.status.toLowerCase() === "active"
-      ) {
-        return 1;
+  const filteredData = employees
+    .filter((emp) => !emp.is_deleted)
+    .sort((a, b) => {
+      if (statusOrder === "activeFirst") {
+        if (
+          a.status.toLowerCase() === "active" &&
+          b.status.toLowerCase() === "inactive"
+        ) {
+          return -1;
+        } else if (
+          a.status.toLowerCase() === "inactive" &&
+          b.status.toLowerCase() === "active"
+        ) {
+          return 1;
+        } else {
+          return 0;
+        }
+      } else if (statusOrder === "inActiveFirst") {
+        if (
+          a.status.toLowerCase() === "inactive" &&
+          b.status.toLowerCase() === "active"
+        ) {
+          return -1;
+        } else if (
+          a.status.toLowerCase() === "active" &&
+          b.status.toLowerCase() === "inactive"
+        ) {
+          return 1;
+        } else {
+          return 0;
+        }
       } else {
-        return 0;
+        res.status(400).send("please enter correct status order!");
       }
-    } else if (statusOrder === "inActiveFirst") {
-      if (
-        a.status.toLowerCase() === "inactive" &&
-        b.status.toLowerCase() === "active"
-      ) {
-        return -1;
-      } else if (
-        a.status.toLowerCase() === "active" &&
-        b.status.toLowerCase() === "inactive"
-      ) {
-        return 1;
-      } else {
-        return 0;
-      }
-    } else {
-      res.status(400).send("please enter correct status order!");
-    }
-  });
+    });
   res.status(200).json(filteredData);
 };
 
@@ -218,7 +226,7 @@ const searchByBDorName = (req, res) => {
     const employees = readDataFromFile(employeeDB);
     const employee = employees.filter(
       (emp) =>
-        (birthDate && emp.birthDate === birthDate) ||
+        (!emp.is_deleted && birthDate && emp.birthDate === birthDate) ||
         (firstName && emp.firstName === firstName)
     );
 
