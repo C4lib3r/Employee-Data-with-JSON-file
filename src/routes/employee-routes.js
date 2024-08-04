@@ -1,4 +1,6 @@
 const { Router } = require("express");
+const passport = require("passport");
+
 const router = Router();
 
 const {
@@ -17,30 +19,30 @@ const {
 router.get("/", getHome);
 
 //Get all employees
-router.get("/getallemployees", getAllEmployees);
+router.get("/getallemployees", passport.authenticate("local", {session: false}), getAllEmployees);
 
 //Get employee By ID
-router.get("/employeeByID/:id", getEmployeeById);
+router.get("/employeeByID/:id", passport.authenticate("local", {session: false}), getEmployeeById);
 
 //create new employee
-router.post("/createemployee", createEmployee);
+router.post("/createemployee", passport.authenticate("local", {session: false}), createEmployee);
 
 //edit/update existing employee
 //Throw error if employee does not exist
 //Put or patch which one to use
-router.put("/updateEmployee", updateEmployee);
+router.put("/updateEmployee", passport.authenticate("local", {session: false}), updateEmployee);
 
 //Delete existing employee
 //Throw error if employee does not exist
 //Hard delete or soft delete
-router.delete("/deleteEmployee/:id", deleteEmployee);
+router.delete("/deleteEmployee/:id", passport.authenticate("local", {session: false}), deleteEmployee);
 
 //Filter records based on Created date asc/ desc , Status (active / Inactive)
-router.get("/filtercreateddate", filterEmployeeByCreatedDate);
+router.get("/filtercreateddate", passport.authenticate("local", {session: false}), filterEmployeeByCreatedDate);
 
-router.get("/filteremployeebystatus", filterEmployeeByStatus);
+router.get("/filteremployeebystatus", passport.authenticate("local", {session: false}), filterEmployeeByStatus);
 
 //can search records based on Name, birthdate
-router.get("/employee/search", searchByBDorName);
+router.get("/employee/search", passport.authenticate("local", {session: false}), searchByBDorName);
 
 module.exports = router;
