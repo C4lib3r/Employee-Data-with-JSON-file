@@ -4,7 +4,7 @@ const passport = require("passport");
 const app = express();
 const env = require("dotenv");
 const employeeRoutes = require("./routes/employee-routes");
-const passportConfig = require("./passport-config")
+const passportConfig = require("./passport/passport-config")
 
 env.config();
 
