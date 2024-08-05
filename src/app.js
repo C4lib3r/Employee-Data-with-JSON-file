@@ -5,6 +5,7 @@ const app = express();
 const env = require("dotenv");
 const employeeRoutes = require("./routes/employee-routes");
 const passportConfig = require("./passport/passport-config")
+const userRoutes = require("./user/user-routes")
 
 env.config();
 
@@ -26,6 +27,8 @@ const port = process.env.PORT || 3000;
 
 //Set route to the router for endpoints
 app.use("/api", employeeRoutes);
+
+app.use("/api",userRoutes);
 
 //Funxtino for starting application
 const start = () => {

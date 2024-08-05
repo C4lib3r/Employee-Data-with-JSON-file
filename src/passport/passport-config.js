@@ -5,7 +5,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 
 
-const usersFilePath = path.join(__dirname,"user/users.json"); //path to user data file
+const usersFilePath = path.join(__dirname,"../user/users.json"); //path to user data file
 
 //Function to read user data from file
 
