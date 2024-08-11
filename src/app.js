@@ -7,6 +7,9 @@ const employeeRoutes = require("./routes/employee-routes");
 const passportConfig = require("./passport/passport-config")
 const userRoutes = require("./user/user-routes")
 
+const AWS = require("aws-sdk");
+
+
 env.config();
 
 app.use(express.json());
@@ -22,6 +25,37 @@ app.use(session({
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+// initialize AWS lambda function
+const lmabda = new AWS.Lambda({
+  region:process.env.AWS_REGION, // AWS region
+})
+
+// Route to invoke lambda function
+app.post("api/upload-employee",async(req,res)=>{
+  try {
+    const payload = {
+      employeeData: req.body.employeeData,
+      imageBuffer: req.body.imageBuffer
+    };
+
+    const lambdaParamas = {
+      FunctionName: '', //Lambda function name
+            InvocationType: 'RequestResponse', // or 'Event' for async invocation
+            Payload: JSON.stringify(payload),
+            }
+    
+    const lambdaResponse = await lmabda.invoke(lambdaParamas).promise();
+
+    const response = JSON.parse(lambdaResponse.Payload);
+
+    res.status(lambdaResponse.StatusCode).json(response);
+  }catch(e){
+    console.error("Error invoking lambda",e);
+    res.status(500).json({error:"Internal server error"});
+  }
+})
 
 
 //Set route to the router for endpoints
