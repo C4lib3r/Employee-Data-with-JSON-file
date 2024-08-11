@@ -2,5 +2,9 @@
   {
     "username": "testuser",
     "password": "$2b$10$8VL3giTkI/Bc48ZqX9f4WOtz/jR2IOUvAK4Y71Wwy55ZTL94adf36"
+  },
+  {
+    "username": "AuthTrack",
+    "password": "$2b$10$J9cy6b7Gt54MGxI.c2irvOWYr8wMw0f0/xWLUSkvU1yEjFPE5NRD."
   }
 ]

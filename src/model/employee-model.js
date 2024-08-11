@@ -13,7 +13,7 @@ class Employee {
   ) {
     (this.empID = empID), (this.firstName = firstName);
     (this.lastName = lastName),
-      (this.birthdDate = birthDate),
+      (this.birthDate = birthDate),
       (this.photo = photo),
       (this.joiningDate = joiningDate),
       (this.createdDate = createdDate || new Date()),

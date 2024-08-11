@@ -9,7 +9,7 @@ const usersFilePath = path.join(__dirname, "./users.json");
 
 // Function to read users from file
 const readUsersFromFile = () => {
-  let dataStr = fs.readFileSync(usersFilePath,utf-8);
+  let dataStr = fs.readFileSync(usersFilePath);
   return JSON.parse(dataStr);
 };
 

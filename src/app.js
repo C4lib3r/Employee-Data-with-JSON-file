@@ -20,15 +20,17 @@ app.use(session({
 }));
 
 //passport middleware
-passport.use(passport.initialize());
-passport.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
-const port = process.env.PORT || 3000;
 
 //Set route to the router for endpoints
 app.use("/api", employeeRoutes);
 
 app.use("/api",userRoutes);
+
+
+const port = process.env.PORT || 3000;
 
 //Funxtino for starting application
 const start = () => {
